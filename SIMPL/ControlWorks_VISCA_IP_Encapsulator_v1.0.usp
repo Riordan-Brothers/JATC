@@ -1,0 +1,86 @@
+/*******************************************************************************************
+  SIMPL+ Module Information
+*******************************************************************************************/
+/*
+Dealer Name:	
+System Name:
+System Number:
+Programmer:
+Comments:
+*/
+
+/*******************************************************************************************
+  Compiler Directives
+*******************************************************************************************/
+#DEFAULT_VOLATILE
+#ENABLE_STACK_CHECKING
+#ENABLE_TRACE
+
+/*******************************************************************************************
+  DIGITAL, ANALOG and SERIAL INPUTS and OUTPUTS
+*******************************************************************************************/
+DIGITAL_INPUT reset_sequence;
+STRING_INPUT from_logic$[50]; 
+STRING_OUTPUT to_device$; 
+
+INTEGER sequence1, sequence2, sequence3, sequence4; 
+
+/*******************************************************************************************
+  Event Handlers
+*******************************************************************************************/
+PUSH reset_sequence { 
+ 	sequence1 = 0; 
+	sequence2 = 0; 
+	sequence3 = 0;
+	sequence4 = 0; 
+}
+CHANGE from_logic$ { 
+   /*	As an example, to move to the HOME position the full packet is: 
+		0x01 0x00 0x00 0x05 0x00 0x00 0x00 0x01 0x81 0x01 0x06 0x04 0xFF 
+		These bytes would be sent via UDP to the cameras address, on port 52381. 
+ 		The example breaks down like this: 0x01 0x00 Payload type – VISCA Command 0x00 0x05 Payload length – 
+		in this case the HOME command is 5 bytes 0x00 0x00 0x00 0x01 Sequence number – in this case the first 
+		command, number 1 0x81 0x01 0x06 0x04 0xFF The standard RS232 VISCA Home command (page 38 of manual) 
+ 
+		Replacing the sequence number in the example above with 0xFF 0xFF 0xFF 0xFF works in one controller topologies as the cameras will expect the next value to be 0x00 0x00 0x00 0x00 (see page 31 of manual). */
+		 
+    sequence4 = sequence4 + 1;
+	IF (sequence4 >= 256) { 
+		sequence4 = 0;
+		sequence3 = sequence3 + 1; 
+		IF (sequence3 >= 256) { 
+			sequence3 = 0; 
+        	sequence2 = sequence2 + 1;
+			IF (sequence2 >= 256) { 
+             	sequence2 = 0;
+				sequence1 = sequence1+1; 
+				IF (sequence1 >= 256) { 
+					sequence1 = 0; 
+				} 
+			}
+		}	 		
+	} 
+ 	MAKESTRING(to_device$, "\x01\x00\x00%c%c%c%c%c%s", LEN(from_logic$), sequence1, sequence2, sequence3, sequence4, from_logic$); 
+
+}
+
+/*******************************************************************************************
+  Main()
+  Uncomment and place one-time startup code here
+  (This code will get called when the system starts up)
+*******************************************************************************************/
+/*
+Function Main()
+{
+    // TODO:  Add code here
+    // Initialize declared global and local variables/arrays as needed.
+
+    // WaitForInitializationComplete();
+    // If you are reading any Input or Output variables, uncomment
+    //   the WaitForInitializationComplete statement above and read
+    //   them afterwards.  Input/Output variables will not have
+    //   their correct values set until after the logic processor
+    //   runs and propagates the values to them.
+}
+*/
+

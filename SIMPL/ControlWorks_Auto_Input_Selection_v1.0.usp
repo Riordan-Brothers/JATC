@@ -1,0 +1,99 @@
+/*******************************************************************************************
+  SIMPL+ Module Information
+*******************************************************************************************/
+/*
+Dealer Name:		ControlWorks Consulting, LLC
+System Name:		DiData - Brookfield autoswitch logic
+Programmer:			lincoln@controlworks.com
+Comments:			-- v1.0 lincoln@controlworks.com --
+					- Inital version for pilot room
+*/
+
+/*******************************************************************************************
+  Compiler Directives
+*******************************************************************************************/
+#DEFAULT_VOLATILE
+#ENABLE_STACK_CHECKING
+#ENABLE_TRACE
+
+#DEFINE_CONSTANT maxInputs	14
+/*******************************************************************************************
+  Include Libraries
+*******************************************************************************************/
+
+/*******************************************************************************************
+  DIGITAL, ANALOG and SERIAL INPUTS and OUTPUTS
+*******************************************************************************************/
+DIGITAL_INPUT inputHasSync[maxInputs]; 
+ANALOG_INPUT inputNumberForSwitching[maxInputs]; 
+
+ANALOG_OUTPUT selectInputFb; 
+
+/*******************************************************************************************
+  SOCKETS
+*******************************************************************************************/
+
+/*******************************************************************************************
+  Global Variables
+*******************************************************************************************/
+INTEGER inputStack[maxInputs]; 
+INTEGER topOfStack; 
+
+/*******************************************************************************************
+  Functions
+*******************************************************************************************/
+
+/*******************************************************************************************
+  Event Handlers
+******************************************************************************************/
+PUSH inputHasSync { 
+	INTEGER inputNumber; 
+	inputNumber = GETLASTMODIFIEDARRAYINDEX(); 
+
+	IF (topOfStack < maxInputs) { 
+		topOfStack=topOfStack +1; 
+		inputStack[topOfStack] = inputNumber; 
+		selectInputFb = inputNumberForSwitching[inputNumber]; 
+	} 
+}
+RELEASE inputHasSync { 
+	INTEGER inputNumber; 
+	INTEGER i,j; 
+	inputNumber = GETLASTMODIFIEDARRAYINDEX(); 
+                     
+	FOR (i = 0 TO topOfStack) { 
+      	IF (inputStack[i] = inputNumber) { 
+          	FOR (j=i+1 to topOfStack) {
+				inputStack[j-1] = inputStack[j];              	
+			}
+		} 
+	} 
+	topOfStack = topOfStack - 1; 
+
+	IF (topOfStack > 0) { 
+		selectInputFb = inputNumberForSwitching[inputStack[topOfStack]];
+	} ELSE {
+		selectInputFb = 0; 
+	} 
+}
+
+/*******************************************************************************************
+  Main()
+  Uncomment and place one-time startup code here
+  (This code will get called when the system starts up)
+*******************************************************************************************/
+/*
+Function Main()
+{
+    // TODO:  Add code here
+    // Initialize declared global and local variables/arrays as needed.
+
+    // WaitForInitializationComplete();
+    // If you are reading any Input or Output variables, uncomment
+    //   the WaitForInitializationComplete statement above and read
+    //   them afterwards.  Input/Output variables will not have
+    //   their correct values set until after the logic processor
+    //   runs and propagates the values to them.
+}
+*/
+

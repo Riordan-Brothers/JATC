@@ -1,0 +1,90 @@
+/*******************************************************************************************
+  SIMPL+ Module Information
+*******************************************************************************************/
+/*
+Dealer Name:ControlWorks Consulting, LLC.
+System Name:HTTP Client Engine V1.0 (ControlWorks)
+System Number:
+Programmer:caleb@controlworks.com
+Revision History:
+	v1 -- caleb@controlworks.com
+		2020.008.18 Initial release
+
+Comments:	Copyright (C) 2020 ControlWorks Consulting, LLC All Rights Reserved – Use Subject to License.
+			US Government Restricted Rights. Use, duplication or disclosure by the Government is subject to restrictions set forth in subparagraphs (a)-(d) of FAR 52.227-19. 
+/*******************************************************************************************
+  Compiler Directives
+*******************************************************************************************/
+#SYMBOL_NAME "HTTP Client Engine V1.0 (ControlWorks)"
+#DEFAULT_VOLATILE
+#ENABLE_STACK_CHECKING
+#ENABLE_TRACE
+#CATEGORY "0" // hidden
+
+#HELP_BEGIN
+Copyright (C) 2020 ControlWorks Consulting, LLC All Rights Reserved – Use Subject to License.
+US Government Restricted Rights. Use, duplication or disclosure by the Government is subject to restrictions set forth in subparagraphs (a)-(d) of FAR 52.227-19.
+#HELP_END
+/*******************************************************************************************
+  Include Libraries
+*******************************************************************************************/
+#INCLUDEPATH "C:\clients\HttpClientControlWorks\HttpClientControlWorks\HttpClientControlWorks\bin\Debug"
+#USER_SIMPLSHARP_LIBRARY "HttpClientControlWorks" 
+
+/*******************************************************************************************
+  DIGITAL, ANALOG and SERIAL INPUTS and OUTPUTS
+*******************************************************************************************/
+DIGITAL_INPUT debug;
+STRING_INPUT urlPath$[255];
+STRING_OUTPUT response$;
+
+STRING_PARAMETER IPAddress[64];
+INTEGER_PARAMETER Port;
+STRING_PARAMETER Username[32];
+STRING_PARAMETER Password[32];
+
+/*******************************************************************************************
+  Global Variables
+*******************************************************************************************/
+HttpClientEngine myHttpClientEngine;
+
+/*******************************************************************************************
+  Functions
+*******************************************************************************************/
+
+/*******************************************************************************************
+  Event Handlers
+*******************************************************************************************/
+PUSH debug
+{
+	myHttpClientEngine.DebugUshort = 1;
+}
+
+RELEASE debug
+{
+	myHttpClientEngine.DebugUshort = 0;
+}
+
+
+CHANGE urlPath$
+{
+	response$ = myHttpClientEngine.doHTTPConnectionSync(urlPath$);
+}
+
+/*******************************************************************************************
+  Main()
+*******************************************************************************************/
+FUNCTION Main()
+{
+	STRING lsSymbolID[255];
+	lsSymbolID = GETSYMBOLINSTANCENAME();
+	myHttpClientEngine.SymbolIDString = REMOVE(":",lsSymbolID);
+	myHttpClientEngine.IPAddressString = IPAddress;
+	myHttpClientEngine.HttpPortUshort = Port;
+	myHttpClientEngine.UsernameString = Username;
+	myHttpClientEngine.PasswordString = Password;
+
+
+
+
+}

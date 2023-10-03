@@ -1,0 +1,23 @@
+<Device Model="CP4">
+   <Network Type="Cresnet" Id="01"/>
+   <Network Type="Ethernet" Id="02">
+      <Device Model="UC-ENGINE-FLEX-TEAMS" DeviceId="11" Name="[auditorium] tp"/>
+      <Device Model="UC-ENGINE-FLEX-TEAMS" DeviceId="12" Name="[lecture222] tp"/>
+      <Device Model="UC-ENGINE-FLEX-TEAMS" DeviceId="13" Name="[lecture333] tp"/>
+      <Device Model="UC-ENGINE-FLEX-TEAMS" DeviceId="14" Name="[seminar208] tp"/>
+      <Device Model="UC-ENGINE-FLEX-TEAMS" DeviceId="15" Name="[boardroom] tp"/>
+      <Device Model="TS-1070" DeviceId="16" Name="[rack_panel]"/>
+      <Device Model="AM-3200" DeviceId="21" Name="[auditorium] airmedia"/>
+      <Device Model="AM-3200" DeviceId="22" Name="[lecture222] airmedia"/>
+      <Device Model="AM-3200" DeviceId="23" Name="[lecture333] airmedia"/>
+      <Device Model="AM-3200" DeviceId="24" Name="[seminar208] airmedia"/>
+      <Device Model="AM-3200" DeviceId="25" Name="[boardroom] airmedia"/>
+      <Device Model="EslaveCP4" DeviceId="41" Name="[auditorium] lectern io">
+         <Network Type="Cresnet" Id="01"/>
+      </Device>
+      <Device Model="CEN-IO-COM-102" DeviceId="42" Name="[seminar208] lighting"/>
+      <Device Model="CEN-IO-COM-102" DeviceId="43" Name="[lecture222] lighting"/>
+      <Device Model="CEN-IO-COM-102" DeviceId="44" Name="[lecture333] lighitng"/>
+      <Device Model="CEN-IO-COM-102" DeviceId="A5" Name="[boardroom] lighitng"/>
+   </Network>
+</Device>

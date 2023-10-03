@@ -1,0 +1,98 @@
+/*******************************************************************************************
+  SIMPL+ Module Information
+*******************************************************************************************/
+/*
+Dealer Name:		ControlWorks Consulting, LLC
+System Name:
+System Number:
+Programmer:
+Comments:
+*/
+
+/*******************************************************************************************
+  Compiler Directives
+*******************************************************************************************/
+#DEFAULT_VOLATILE
+#ENABLE_STACK_CHECKING
+#ENABLE_TRACE
+
+/*******************************************************************************************
+  DIGITAL, ANALOG and SERIAL INPUTS and OUTPUTS
+*******************************************************************************************/
+DIGITAL_INPUT ptzUp, ptzDown, ptzLeft, ptzRight, ptzZoomIn, ptzZoomOut;
+DIGITAL_INPUT trackingOn, trackingOff;
+ANALOG_INPUT storePreset, recallPreset; 
+
+STRING_OUTPUT commandOut$;
+
+/*******************************************************************************************
+  Global Variables
+  (Uncomment and declare global variables as needed)
+  Note:  Be sure to initialize all declared STRING variables as needed
+         For example, in Function Main: myString = "";
+*******************************************************************************************/
+INTEGER seqNo;
+
+/*******************************************************************************************
+  Functions
+*******************************************************************************************/
+FUNCTION buildCommand(STRING cmd) { 
+	seqNo=seqNo + 1; 
+	MAKESTRING(commandOut$, "/cgi-bin?%s&(%d)", cmd, seqNo); 
+}
+
+/*******************************************************************************************
+  Event Handlers
+  (Uncomment and declare additional event handlers as needed)
+*******************************************************************************************/
+PUSH 	ptzUp 		{ buildCommand("SetPtzf=1,0,1"); } 
+RELEASE ptzUp 		{ buildCommand("SetPtzf=1,0,2"); }
+PUSH 	ptzDown 	{ buildCommand("SetPtzf=1,1,1"); }
+RELEASE ptzDown 	{ buildCommand("SetPtzf=1,1,2"); }
+PUSH	ptzLeft		{ buildCommand("SetPtzf=0,1,1"); }
+RELEASE ptzLeft		{ buildCommand("SetPtzf=0,1,2"); } 
+PUSH	ptzRight	{ buildCommand("SetPtzf=0,0,1"); }
+RELEASE ptzRight	{ buildCommand("SetPtzf=0,0,2"); }
+PUSH	ptzZoomIn	{ buildCommand("SetPtzf=2,0,1"); } 
+RELEASE	ptzZoomIn	{ buildCommand("SetPtzf=2,0,2"); }
+PUSH	ptzZoomOut	{ buildCommand("SetPtzf=2,1,1"); } 
+RELEASE	ptzZoomOut	{ buildCommand("SetPtzf=2,1,2"); }
+CHANGE storePreset { 
+ 	seqNo = seqNo + 1;
+	MAKESTRING(commandOut$, "/cgi-bin?ActPreset=1,%u&(%u)", storePreset, seqNo); 
+}
+CHANGE recallPreset { 
+ 	seqNo = seqNo + 1;
+	MAKESTRING(commandOut$, "/cgi-bin?ActPreset=0,%u&(%u)", recallPreset, seqNo); 
+}
+PUSH trackingOn { 
+ 	MAKESTRING(commandOut$, "/cgi-bin?Set=trk_tracking_on,3,1"); 
+}
+PUSH trackingOff {
+ 	MAKESTRING(commandOut$, "/cgi-bin?Set=trk_tracking_on,3,0"); 
+}
+
+
+
+
+
+/*******************************************************************************************
+  Main()
+  Uncomment and place one-time startup code here
+  (This code will get called when the system starts up)
+*******************************************************************************************/
+/*
+Function Main()
+{
+    // TODO:  Add code here
+    // Initialize declared global and local variables/arrays as needed.
+
+    // WaitForInitializationComplete();
+    // If you are reading any Input or Output variables, uncomment
+    //   the WaitForInitializationComplete statement above and read
+    //   them afterwards.  Input/Output variables will not have
+    //   their correct values set until after the logic processor
+    //   runs and propagates the values to them.
+}
+*/
+
